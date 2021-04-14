@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Upload Files</title>
+  </head>
+  <body>
+    <h1>Files</h1>
+    <ul>
+      {% for file in files %}
+        <li>{{ file.key }}</li>
+      {% endfor %}
+    </ul>
+    <form action="/upload" enctype="multipart/form-data" method="post">
+      <h2>Upload File</h2>
+      <input type="file" name="file" />
+      <br/>
+      <input type="submit" />
+    </form>
+  </body>
+</html>

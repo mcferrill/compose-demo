@@ -1,0 +1,4 @@
+Flask==1.1.2
+livereload==2.5.1
+minio==7.0.3
+boto3==1.17.51

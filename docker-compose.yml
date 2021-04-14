@@ -1,0 +1,15 @@
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - 8080:80
+
+  minio:
+    image: minio/minio
+    ports:
+      - 9090:9000
+    command: server /data
+    environment:
+      - MINIO_ROOT_USER=testuser
+      - MINIO_ROOT_PASSWORD=testpass
