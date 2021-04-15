@@ -12,15 +12,28 @@ except ImportError:
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = '/uploads'
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024
+
+
+# Helper function for development to initialize our test bucket.
+def init():
+    client = Minio('minio:9000',
+                   access_key='minioadmin',
+                   secret_key='minioadmin',
+                   secure=False)
+    if not client.bucket_exists('files'):
+        client.make_bucket('files')
+    if 'sample.c10' not in client.list_objects('files'):
+        client.fput_object('files', 'sample.c10', 'sample.c10')
 
 
 @app.route('/')
 def index():
-    init()
-    return render_template('index.html', files=get_bucket().objects.all())
+    files = get_bucket().objects.all()
+    return render_template('index.html', files=files)
 
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload')
 def upload():
     if 'file' in request.files:
         f = request.files['file']
@@ -33,21 +46,6 @@ def upload():
     return redirect('/')
 
 
-# API
-
-def init():
-    """Use minio API to set up bucket and sample file."""
-
-    client = Minio('minio:9000',
-                   access_key='minioadmin',
-                   secret_key='minioadmin',
-                   secure=False)
-    if not client.bucket_exists('files'):
-        client.make_bucket('files')
-    if 'sample.c10' not in client.list_objects('files'):
-        client.fput_object('files', 'sample.c10', 'sample.c10')
-
-
 def get_bucket():
     init()
     s3 = boto3.resource('s3',
@@ -55,11 +53,6 @@ def get_bucket():
                         aws_access_key_id='minioadmin',
                         aws_secret_access_key='minioadmin')
     return s3.Bucket('files')
-
-
-@app.route('/api/v1/resources/files/all', methods=['GET'])
-def list_files():
-    return [o.key for o in get_bucket().objects.all()]
 
 
 if __name__ == '__main__':
