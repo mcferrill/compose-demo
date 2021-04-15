@@ -2,7 +2,7 @@
 Docker-Compose Demo
 ===================
 
-This repo contains a examples of using docker-compose to emulate complex
+This repo contains examples of using docker-compose to emulate complex
 distributed systems easily for local prototyping and development.
 
 Software Used
